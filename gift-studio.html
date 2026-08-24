@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <!-- страницы часто обновляются — браузер должен проверять свежесть -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Студия сертификатов — Анна Маловичко</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/img/logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --sage:#4A6151; --sage-dark:#35493C; --sage-soft:#7A9081;
+      --caramel:#C08A62; --caramel-dark:#A76F4A; --caramel-soft:#E9D3BF; --caramel-pale:#F5E8DC;
+      --cream:#FBF9F4; --cream-soft:#F3EFE6; --ink:#2C332E; --muted:#6C756E;
+      --border:#E6E1D4; --error:#d04545; --success:#2ea66d;
+      --display:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+      --body:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+      --ease-out:cubic-bezier(.16,1,.3,1);
+      --radius:14px; --radius-lg:22px;
+      --shadow:0 10px 30px rgba(74,97,81,.08);
+      --shadow-lg:0 24px 60px rgba(74,97,81,.14);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-text-size-adjust:100%;}
+    body{
+      font-family:var(--body);font-size:15px;color:var(--ink);background:var(--cream);
+      min-height:100svh;-webkit-font-smoothing:antialiased;
+    }
+    img{display:block;max-width:100%;height:auto;}
+    /* touch-action: двойной тап по кнопкам (пин-код, чипы) не должен приближать страницу на iOS */
+    button{font-family:inherit;cursor:pointer;border:0;background:none;padding:0;color:inherit;touch-action:manipulation;}
+    a{color:var(--sage);text-decoration:none;touch-action:manipulation;}
+    input,textarea{font-family:inherit;}
+
+    /* ============ Экран пин-кода ============ */
+    .lock{
+      position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;padding:24px;text-align:center;
+      background:radial-gradient(120% 100% at 50% 0%, #4A6151 0%, var(--sage-dark) 100%);
+      color:#fff;transition:opacity .6s var(--ease-out), visibility .6s;
+    }
+    .lock.open{opacity:0;visibility:hidden;pointer-events:none;}
+    .lock__logo{
+      width:min(96px,26vw);height:auto;margin-bottom:10px;
+      filter:brightness(0) invert(1);
+      animation:fadeUp .8s var(--ease-out) both;
+    }
+    .lock__brand{
+      font-family:var(--display);font-weight:600;font-size:20px;color:#fff;
+      animation:fadeUp .8s var(--ease-out) .03s both;
+    }
+    .lock__site{
+      font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--caramel);margin:5px 0 26px;
+      animation:fadeUp .8s var(--ease-out) .05s both;
+    }
+    .lock__title{font-family:var(--display);font-weight:500;font-size:clamp(26px,5vw,34px);margin-bottom:6px;animation:fadeUp .8s var(--ease-out) .15s both;}
+    .lock__sub{font-size:13.5px;color:rgba(255,255,255,.6);margin-bottom:30px;animation:fadeUp .8s var(--ease-out) .2s both;}
+
+    .lock__dots{display:flex;gap:14px;justify-content:center;margin-bottom:30px;animation:fadeUp .8s var(--ease-out) .25s both;}
+    .lock__dot{
+      width:14px;height:14px;border-radius:50%;
+      border:1.6px solid rgba(192,138,98,.55);background:transparent;
+      transition:background .2s, transform .2s, border-color .2s;
+    }
+    .lock__dot.on{background:var(--caramel);border-color:var(--caramel);transform:scale(1.15);}
+    .lock__dots.err .lock__dot{border-color:var(--error);background:transparent;animation:shake .45s var(--ease-out);}
+    @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(3px);}}
+
+    .lock__pad{
+      display:grid;grid-template-columns:repeat(3, 76px);gap:14px;justify-content:center;
+      animation:fadeUp .8s var(--ease-out) .3s both;
+    }
+    .lock__key{
+      height:76px;border-radius:50%;font:500 26px/1 var(--display);color:#fff;
+      border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
+      transition:background .18s, border-color .18s, transform .1s;
+      -webkit-tap-highlight-color:transparent;user-select:none;
+    }
+    .lock__key:hover{background:rgba(192,138,98,.18);border-color:var(--caramel);}
+    .lock__key:active{transform:scale(.93);}
+    .lock__key--fn{font-size:20px;border:none;background:transparent;}
+    .lock__key--fn:hover{background:rgba(255,255,255,.07);border:none;}
+    .lock__hint{margin-top:26px;font-size:12px;color:rgba(255,255,255,.4);animation:fadeUp .8s var(--ease-out) .35s both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+
+    /* ============ Приложение ============ */
+    .app{max-width:1240px;margin:0 auto;padding:0 20px 80px;}
+    .app[data-locked]{display:none;}
+
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:22px 0 18px;border-bottom:1px solid var(--border);margin-bottom:34px;
+    }
+    .top__brand{display:flex;align-items:center;gap:14px;}
+    .top__logo{height:40px;width:auto;}
+    .top__title{font-family:var(--display);font-size:21px;font-weight:600;color:var(--sage);}
+    .top__title small{display:block;font-family:var(--body);font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--caramel-dark);margin-top:2px;}
+    .top__lock{
+      font:700 12.5px/1 var(--body);color:var(--muted);padding:10px 18px;border-radius:100px;
+      border:1px solid var(--border);transition:color .2s, border-color .2s;
+    }
+    .top__lock:hover{color:var(--error);border-color:var(--error);}
+
+    .cols{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:40px;align-items:start;}
+    .only-mobile{display:none;}
+    /* На узких экранах предпросмотр идёт ПОСЛЕ формы и НЕ липнет к экрану —
+       иначе он перекрывает поля и форму нельзя заполнить */
+    @media (max-width:980px){
+      /* minmax(0,1fr), не 1fr: иначе колонка не может ужаться и появляется
+         горизонтальный скролл на узких экранах */
+      .cols{grid-template-columns:minmax(0,1fr);gap:30px;}
+      .preview-wrap{position:static;}
+      .only-mobile{display:inline-flex;}
+    }
+    @media (max-width:440px){
+      .result__linkrow{flex-wrap:wrap;}
+      .result__linkrow .bigbtn{width:100%;}
+      .result__share .bigbtn{flex:1 1 45%;}
+    }
+
+    /* ---------- форма ---------- */
+    .panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(22px,4vw,34px);box-shadow:var(--shadow);}
+    .fgroup{margin-bottom:26px;}
+    .fgroup:last-child{margin-bottom:0;}
+    .flabel{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);margin-bottom:10px;}
+    .flabel .opt{color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0;}
+    .finput{
+      width:100%;padding:14px 16px;font-size:15px;color:var(--ink);
+      background:var(--cream);border:1.4px solid var(--border);border-radius:var(--radius);
+      outline:none;transition:border-color .2s, box-shadow .2s;
+    }
+    .finput:focus{border-color:var(--caramel);box-shadow:0 0 0 4px rgba(192,138,98,.14);}
+    textarea.finput{resize:vertical;min-height:76px;line-height:1.5;}
+    /* iOS Safari: у date-инпута своя intrinsic-ширина и центровка —
+       без appearance:none он вылезает за рамки формы на телефоне */
+    input[type="date"].finput{
+      -webkit-appearance:none;appearance:none;
+      display:block;width:100%;max-width:100%;min-width:0;
+      min-height:49px;text-align:left;
+    }
+    input[type="date"].finput::-webkit-date-and-time-value{text-align:left;}
+
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .chip{
+      font:700 13px/1 var(--body);color:var(--sage);padding:9px 15px;border-radius:100px;
+      border:1.4px solid var(--border);background:#fff;
+      transition:all .18s var(--ease-out);
+    }
+    .chip:hover{border-color:var(--caramel);color:var(--caramel-dark);}
+    .chip.on{background:var(--sage);border-color:var(--sage);color:#fff;}
+
+    /* тип события */
+    .types{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:10px;}
+    .type{
+      position:relative;padding:14px 12px 12px;border-radius:var(--radius);text-align:center;
+      border:1.4px solid var(--border);background:#fff;
+      transition:all .2s var(--ease-out);
+    }
+    .type:hover{border-color:var(--caramel);transform:translateY(-2px);box-shadow:var(--shadow);}
+    .type.on{border-color:var(--caramel-dark);background:linear-gradient(180deg,#fff, var(--caramel-pale));box-shadow:0 8px 22px rgba(192,138,98,.25);}
+    .type__emoji{font-size:24px;line-height:1;margin-bottom:8px;}
+    .type__name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+    .type__anim{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.3;}
+    .type.on::after{
+      content:'✓';position:absolute;top:6px;right:8px;width:17px;height:17px;border-radius:50%;
+      background:var(--caramel-dark);color:#fff;font-size:10px;line-height:17px;font-weight:700;
+    }
+
+    .wish-suggest{
+      margin-top:9px;font:500 12.5px/1.3 var(--body);color:var(--caramel-dark);
+      border-bottom:1px dashed var(--caramel);padding-bottom:1px;
+      transition:color .2s;
+    }
+    .wish-suggest:hover{color:var(--sage);}
+
+    /* ---------- результат ---------- */
+    .result{
+      margin-top:26px;background:linear-gradient(135deg, #4A6151, var(--sage-dark));
+      border-radius:var(--radius-lg);padding:clamp(22px,4vw,30px);color:#fff;box-shadow:var(--shadow-lg);
+    }
+    .result h3{font-family:var(--display);font-weight:600;font-size:22px;margin-bottom:4px;}
+    .result p{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:16px;line-height:1.5;}
+    .result__linkrow{display:flex;gap:10px;margin-bottom:14px;}
+    .result__link{
+      flex:1;min-width:0;padding:13px 15px;font-size:13px;color:var(--caramel-pale);
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius);
+      outline:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .bigbtn{
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;
+      font:700 14px/1 var(--body);padding:14px 22px;border-radius:100px;white-space:nowrap;
+      transition:transform .2s var(--ease-out), filter .2s, box-shadow .2s;
+    }
+    .bigbtn:hover{transform:translateY(-2px);filter:brightness(1.06);}
+    .bigbtn svg{width:16px;height:16px;flex-shrink:0;}
+    .bigbtn--gold{color:#26372E;background:linear-gradient(135deg,var(--caramel-pale),var(--caramel));box-shadow:0 10px 26px rgba(192,138,98,.35);}
+    .bigbtn--line{color:#fff;border:1.4px solid rgba(255,255,255,.35);}
+    .bigbtn--line:hover{border-color:var(--caramel);color:var(--caramel-pale);}
+    .result__share{display:flex;gap:10px;flex-wrap:wrap;}
+    .copied{color:var(--success) !important;background:#e8f7ef !important;}
+
+    /* ---------- предпросмотр ---------- */
+    .preview-wrap{position:sticky;top:20px;}
+    .preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .preview-head .flabel{margin:0;}
+    .preview-replay{
+      font:700 12.5px/1 var(--body);color:var(--caramel-dark);padding:8px 14px;border-radius:100px;
+      border:1.4px solid var(--caramel);transition:all .2s;
+    }
+    .preview-replay:hover{background:var(--caramel-pale);}
+    .phone{
+      position:relative;margin:0 auto;width:min(100%, 340px);
+      border-radius:36px;padding:10px;background:var(--sage-dark);
+      box-shadow:var(--shadow-lg), inset 0 0 0 1.6px rgba(192,138,98,.5);
+    }
+    .phone__screen{position:relative;border-radius:27px;overflow:hidden;background:var(--cream);height:0;padding-bottom:198%;}
+    .phone__screen iframe{
+      position:absolute;top:0;left:0;width:390px;height:772px;border:0;
+      transform-origin:0 0; /* масштаб выставляет JS */
+      pointer-events:none;
+    }
+    .preview-note{margin-top:12px;text-align:center;font-size:12px;color:var(--muted);line-height:1.5;}
+
+    /* ---------- история ---------- */
+    .history{margin-top:44px;}
+    .history h2{font-family:var(--display);font-weight:600;font-size:26px;color:var(--sage);margin-bottom:6px;}
+    .history > p{font-size:13px;color:var(--muted);margin-bottom:18px;}
+    .history__empty{padding:26px;border:1.4px dashed var(--border);border-radius:var(--radius-lg);text-align:center;color:var(--muted);font-size:13.5px;}
+    .hitem{
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+      padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow);
+    }
+    .hitem__emoji{font-size:22px;}
+    .hitem__info{flex:1;min-width:160px;}
+    .hitem__name{font-weight:700;font-size:14.5px;color:var(--ink);}
+    .hitem__sub{font-size:12px;color:var(--muted);margin-top:2px;}
+    .hitem__btn{
+      font:700 12.5px/1 var(--body);color:var(--sage);padding:9px 14px;border-radius:100px;
+      border:1.4px solid var(--border);transition:all .18s;
+    }
+    .hitem__btn:hover{border-color:var(--caramel);color:var(--caramel-dark);}
+    .hitem__btn--del:hover{border-color:var(--error);color:var(--error);}
+  </style>
+</head>
+<body>
+
+  <!-- ============ Пин-код ============ -->
+  <div class="lock" id="lock">
+    <img class="lock__logo" src="assets/img/logo-mark.svg" alt="Логотип — монограмма А">
+    <div class="lock__brand">Анна Маловичко · психолог</div>
+    <div class="lock__site">студия сертификатов</div>
+    <h1 class="lock__title">Студия сертификатов</h1>
+    <p class="lock__sub">Введите пин-код, чтобы продолжить</p>
+    <div class="lock__dots" id="dots">
+      <span class="lock__dot"></span><span class="lock__dot"></span>
+      <span class="lock__dot"></span><span class="lock__dot"></span>
+    </div>
+    <div class="lock__pad" id="pad">
+      <button class="lock__key" data-d="1">1</button>
+      <button class="lock__key" data-d="2">2</button>
+      <button class="lock__key" data-d="3">3</button>
+      <button class="lock__key" data-d="4">4</button>
+      <button class="lock__key" data-d="5">5</button>
+      <button class="lock__key" data-d="6">6</button>
+      <button class="lock__key" data-d="7">7</button>
+      <button class="lock__key" data-d="8">8</button>
+      <button class="lock__key" data-d="9">9</button>
+      <span></span>
+      <button class="lock__key" data-d="0">0</button>
+      <button class="lock__key lock__key--fn" data-d="del" aria-label="Стереть">⌫</button>
+    </div>
+    <div class="lock__hint">Можно вводить и с клавиатуры</div>
+  </div>
+
+  <!-- ============ Приложение ============ -->
+  <div class="app" id="app" data-locked>
+    <header class="top">
+      <div class="top__brand">
+        <img class="top__logo" src="assets/img/logo-mark.svg" alt="Логотип — монограмма А">
+        <div class="top__title">Студия сертификатов
+          <small>Анна Маловичко · психолог</small>
+        </div>
+      </div>
+      <button class="top__lock" id="lockBtn">Выйти</button>
+    </header>
+
+    <div class="cols">
+      <!-- Форма -->
+      <div>
+        <div class="panel">
+          <div class="fgroup">
+            <label class="flabel" for="fName">Имя и фамилия получателя</label>
+            <input class="finput" id="fName" type="text" placeholder="Например: Мария Иванова" autocomplete="off">
+          </div>
+
+          <div class="fgroup">
+            <label class="flabel" for="fAmount">Сумма сертификата, ₽</label>
+            <input class="finput" id="fAmount" type="number" inputmode="numeric" min="500" step="500" placeholder="5000">
+            <div class="chips" id="amountChips">
+              <button class="chip" data-v="2500">2 500</button>
+              <button class="chip" data-v="3000">3 000</button>
+              <button class="chip" data-v="5000">5 000</button>
+              <button class="chip" data-v="7500">7 500</button>
+              <button class="chip" data-v="10000">10 000</button>
+              <button class="chip" data-v="15000">15 000</button>
+            </div>
+          </div>
+
+          <div class="fgroup">
+            <span class="flabel">Повод — своя анимация для каждого</span>
+            <div class="types" id="types"></div>
+          </div>
+
+          <div class="fgroup">
+            <label class="flabel" for="fExpiry">Действителен до</label>
+            <input class="finput" id="fExpiry" type="date">
+            <div class="chips" id="expiryChips">
+              <button class="chip" data-m="3">3 месяца</button>
+              <button class="chip on" data-m="6">6 месяцев</button>
+              <button class="chip" data-m="12">1 год</button>
+            </div>
+          </div>
+
+          <div class="fgroup">
+            <label class="flabel" for="fMessage">Пожелание <span class="opt">— необязательно</span></label>
+            <textarea class="finput" id="fMessage" maxlength="220" placeholder="Тёплые слова, которые увидит получатель…"></textarea>
+            <button class="wish-suggest" id="wishSuggest">✨ Подставить готовое пожелание</button>
+          </div>
+
+          <div class="fgroup only-mobile" style="margin-top:-6px">
+            <button class="bigbtn" id="toPreview" style="width:100%;color:var(--sage);border:1.4px solid var(--caramel);background:var(--caramel-pale)">
+              👁 Посмотреть предпросмотр
+            </button>
+          </div>
+        </div>
+
+        <!-- Результат -->
+        <div class="result">
+          <h3>Ссылка на сертификат</h3>
+          <p>Отправьте её получателю или покупателю — сертификат откроется красиво, с анимацией. Номер: <strong id="certNoOut" style="color:var(--caramel-pale)">—</strong></p>
+          <div class="result__linkrow">
+            <input class="result__link" id="linkOut" readonly value="Заполните имя и сумму…" aria-label="Ссылка на сертификат">
+            <button class="bigbtn bigbtn--gold" id="copyBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <div class="result__share">
+            <a class="bigbtn bigbtn--line" id="waShare" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-2.9-1.3-4.8-4.2-5-4.4-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5.2.6.8 2 .9 2.1.1.2.1.3 0 .5-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.2.5.1.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.3.7-.2.3.1 1.9.9 2.2 1.1.3.2.5.2.6.4.1.1.1.7-.1 1.4z"/></svg>
+              WhatsApp
+            </a>
+            <a class="bigbtn bigbtn--line" id="tgShare" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.3-1.2-.9-2.2-2-1.7L2.7 9.9c-1.2.5-1.1 2.2.1 2.6l4.4 1.4 1.7 5.2c.3 1 1.6 1.3 2.4.5l2.4-2.4 4.4 3.2c.9.7 2.2.2 2.4-.9l3.3-14.9zM8.2 12.9l9.3-5.7c.2-.1.4.2.2.3l-7.7 7-.3 3.2-1.5-4.8z"/></svg>
+              Telegram
+            </a>
+            <a class="bigbtn bigbtn--line" id="openFull" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Открыть
+            </a>
+            <button class="bigbtn bigbtn--line" id="newBtn" title="Очистить форму и создать следующий сертификат">
+              ＋ Новый сертификат
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Предпросмотр -->
+      <div class="preview-wrap">
+        <div class="preview-head">
+          <span class="flabel">Живой предпросмотр</span>
+          <button class="preview-replay" id="replayBtn">▶ Проиграть заново</button>
+        </div>
+        <div class="phone">
+          <div class="phone__screen" id="phoneScreen">
+            <iframe id="pv" title="Предпросмотр сертификата"></iframe>
+          </div>
+        </div>
+        <p class="preview-note">Так получатель увидит сертификат на телефоне.<br>Нажмите «Проиграть заново», чтобы посмотреть анимацию открытия.</p>
+      </div>
+    </div>
+
+    <!-- История -->
+    <section class="history">
+      <h2>Выданные сертификаты</h2>
+      <p id="histNote">Загружаю историю…</p>
+      <div id="historyList"></div>
+    </section>
+  </div>
+
+  <script>
+  'use strict';
+  /* ============================================================
+     Студия подарочных сертификатов (закрытая, по пин-коду).
+     Формирует ссылку на gift.html с данными в base64url:
+     gift.html#1.<base64url(JSON)> — бэкенда нет, всё в ссылке.
+     ============================================================ */
+
+  /* ---------- пин-код ---------- */
+  var lock = document.getElementById('lock');
+  var app = document.getElementById('app');
+  var dots = document.getElementById('dots');
+  var dotEls = dots.querySelectorAll('.lock__dot');
+  var pin = '';
+  var PIN_OK = atob('MTIzNA=='); /* пин-код Анны (4 цифры) */
+  var PIN_LEN = PIN_OK.length;
+
+  function unlockApp(){
+    lock.classList.add('open');
+    app.removeAttribute('data-locked');
+    /* пин сохраняем на сессию: им же авторизуются запросы к gift-api.php */
+    sessionStorage.setItem('am_gift_auth', pin);
+    initApp();
+  }
+  function renderDots(){
+    dotEls.forEach(function(d, i){ d.classList.toggle('on', i < pin.length); });
+  }
+  function pinInput(d){
+    if(d === 'del'){ pin = pin.slice(0, -1); renderDots(); return; }
+    if(pin.length >= PIN_LEN) return;
+    pin += d; renderDots();
+    if(pin.length === PIN_LEN){
+      if(pin === PIN_OK){ setTimeout(unlockApp, 180); }
+      else {
+        dots.classList.add('err');
+        setTimeout(function(){ dots.classList.remove('err'); pin = ''; renderDots(); }, 550);
+      }
+    }
+  }
+  document.getElementById('pad').addEventListener('click', function(e){
+    var b = e.target.closest('[data-d]');
+    if(b) pinInput(b.dataset.d);
+  });
+  document.addEventListener('keydown', function(e){
+    if(!lock.classList.contains('open')){
+      if(/^[0-9]$/.test(e.key)) pinInput(e.key);
+      else if(e.key === 'Backspace') pinInput('del');
+    }
+  });
+  document.getElementById('lockBtn').addEventListener('click', function(){
+    sessionStorage.removeItem('am_gift_auth');
+    location.reload();
+  });
+
+  /* ---------- поводы (id должны совпадать с THEMES в gift.html) ---------- */
+  var TYPES = [
+    { id:'universal', emoji:'🌿', name:'Забота о себе', anim:'тёплое сияние',
+      wish:'Это время — только для тебя. Позаботься о себе так, как ты заботишься о других.' },
+    { id:'birthday', emoji:'🎉', name:'День рождения', anim:'конфетти и шары',
+      wish:'С днём рождения! Пусть этот год будет добрым к тебе — а этот подарок станет временем для самого важного человека: тебя.' },
+    { id:'support', emoji:'🕊️', name:'Поддержка', anim:'летящие листья',
+      wish:'Я рядом. Пусть эти встречи станут местом, где можно выдохнуть и набраться сил.' },
+    { id:'newyear', emoji:'🎄', name:'Новый год', anim:'снег и фейерверк',
+      wish:'С Новым годом! Пусть он начнётся с заботы о себе — самой важной инвестиции.' },
+    { id:'march8', emoji:'🌷', name:'8 Марта', anim:'весенние лепестки',
+      wish:'С 8 Марта! Ты заслуживаешь внимания, тепла и времени для себя.' },
+    { id:'love', emoji:'❤️', name:'От всего сердца', anim:'парящие сердца',
+      wish:'От всего сердца — самому дорогому человеку. Береги себя, ты очень важен для меня.' }
+  ];
+
+  /* ---------- состояние формы ---------- */
+  var state = { name:'', amount:'', type:'universal', expiry:'', message:'', certNo:'' };
+  /* Номер сертификата уникален: после сохранения в историю любое изменение
+     формы = уже НОВЫЙ сертификат, и он получает новый номер (иначе второй
+     сертификат перезаписывал бы первый в истории). */
+  var savedCurrent = false;
+  function touchForm(){
+    if(savedCurrent){ state.certNo = newCertNo(); savedCurrent = false; }
+  }
+
+  function newCertNo(){
+    var d = new Date();
+    var yy = String(d.getFullYear()).slice(-2);
+    var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+    return 'AM-' + yy + mm + '-' + String(1000 + Math.floor(Math.random() * 9000));
+  }
+
+  function plusMonths(m){
+    var d = new Date();
+    d.setMonth(d.getMonth() + m);
+    return d.toISOString().slice(0, 10);
+  }
+
+  /* ---------- кодирование ссылки ---------- */
+  function encodeData(obj){
+    var bytes = new TextEncoder().encode(JSON.stringify(obj));
+    var bin = '';
+    for(var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return '1.' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function viewerBase(){
+    return location.href.split(/[?#]/)[0].replace(/gift-studio\.html$/, 'gift.html');
+  }
+  function buildUrl(){
+    if(!state.name.trim() || !Number(state.amount)) return null;
+    var payload = {
+      n: state.name.trim(),
+      a: Number(state.amount),
+      t: state.type,
+      k: state.certNo
+    };
+    if(state.expiry) payload.e = state.expiry;
+    if(state.message.trim()) payload.m = state.message.trim();
+    return viewerBase() + '#' + encodeData(payload);
+  }
+
+  /* ---------- инициализация приложения ---------- */
+  var inited = false;
+  function initApp(){
+    if(inited) return; inited = true;
+
+    state.certNo = newCertNo();
+    state.expiry = plusMonths(6);
+
+    /* карточки поводов */
+    var typesEl = document.getElementById('types');
+    TYPES.forEach(function(t){
+      var b = document.createElement('button');
+      b.className = 'type' + (t.id === state.type ? ' on' : '');
+      b.dataset.id = t.id;
+      b.innerHTML = '<div class="type__emoji">' + t.emoji + '</div>' +
+        '<div class="type__name">' + t.name + '</div>' +
+        '<div class="type__anim">' + t.anim + '</div>';
+      b.addEventListener('click', function(){
+        touchForm();
+        state.type = t.id;
+        typesEl.querySelectorAll('.type').forEach(function(x){ x.classList.toggle('on', x.dataset.id === t.id); });
+        update(true);
+      });
+      typesEl.appendChild(b);
+    });
+
+    var fName = document.getElementById('fName');
+    var fAmount = document.getElementById('fAmount');
+    var fExpiry = document.getElementById('fExpiry');
+    var fMessage = document.getElementById('fMessage');
+    fExpiry.value = state.expiry;
+
+    fName.addEventListener('input', function(){ touchForm(); state.name = fName.value; update(); });
+    fAmount.addEventListener('input', function(){
+      touchForm(); state.amount = fAmount.value;
+      document.querySelectorAll('#amountChips .chip').forEach(function(c){ c.classList.toggle('on', c.dataset.v === fAmount.value); });
+      update();
+    });
+    fExpiry.addEventListener('input', function(){
+      touchForm(); state.expiry = fExpiry.value;
+      document.querySelectorAll('#expiryChips .chip').forEach(function(c){ c.classList.remove('on'); });
+      update();
+    });
+    fMessage.addEventListener('input', function(){ touchForm(); state.message = fMessage.value; update(); });
+
+    document.getElementById('amountChips').addEventListener('click', function(e){
+      var c = e.target.closest('.chip'); if(!c) return;
+      touchForm();
+      fAmount.value = c.dataset.v; state.amount = c.dataset.v;
+      this.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('on', x === c); });
+      update(true);
+    });
+    document.getElementById('expiryChips').addEventListener('click', function(e){
+      var c = e.target.closest('.chip'); if(!c) return;
+      touchForm();
+      fExpiry.value = plusMonths(Number(c.dataset.m)); state.expiry = fExpiry.value;
+      this.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('on', x === c); });
+      update();
+    });
+
+    document.getElementById('wishSuggest').addEventListener('click', function(){
+      touchForm();
+      var t = TYPES.find(function(x){ return x.id === state.type; });
+      fMessage.value = t.wish; state.message = t.wish; update();
+    });
+
+    /* «Новый сертификат» — очистить форму под следующего получателя */
+    document.getElementById('newBtn').addEventListener('click', function(){
+      state.name = ''; state.amount = ''; state.message = '';
+      state.expiry = plusMonths(6);
+      state.certNo = newCertNo(); savedCurrent = false;
+      fName.value = ''; fAmount.value = ''; fMessage.value = '';
+      fExpiry.value = state.expiry;
+      document.querySelectorAll('#amountChips .chip').forEach(function(c){ c.classList.remove('on'); });
+      document.querySelectorAll('#expiryChips .chip').forEach(function(c){ c.classList.toggle('on', c.dataset.m === '6'); });
+      update(true);
+      document.querySelector('.panel').scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(function(){ fName.focus(); }, 500);
+    });
+
+    /* мобильная кнопка «к предпросмотру» */
+    document.getElementById('toPreview').addEventListener('click', function(){
+      document.querySelector('.preview-wrap').scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+
+    /* копирование и шаринг */
+    var copyBtn = document.getElementById('copyBtn');
+    copyBtn.addEventListener('click', function(){
+      var url = buildUrl();
+      if(!url){ flashLink(); return; }
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+        .catch(function(){
+          var inp = document.getElementById('linkOut');
+          inp.select(); document.execCommand('copy');
+        })
+        .then(function(){
+          copyBtn.classList.add('copied');
+          copyBtn.lastChild.textContent = ' Скопировано';
+          setTimeout(function(){
+            copyBtn.classList.remove('copied');
+            copyBtn.lastChild.textContent = ' Копировать';
+          }, 1800);
+        });
+      saveToHistory(url);
+    });
+    ['waShare', 'tgShare', 'openFull'].forEach(function(id){
+      document.getElementById(id).addEventListener('click', function(e){
+        if(!buildUrl()){ e.preventDefault(); flashLink(); return; }
+        saveToHistory(buildUrl());
+      });
+    });
+
+    document.getElementById('replayBtn').addEventListener('click', function(){ refreshPreview(); });
+
+    /* масштаб iframe-превью под ширину «телефона» */
+    function scalePreview(){
+      var screen = document.getElementById('phoneScreen');
+      var s = screen.clientWidth / 390;
+      var f = document.getElementById('pv');
+      f.style.transform = 'scale(' + s + ')';
+      f.style.height = (screen.clientHeight / s) + 'px';
+    }
+    window.addEventListener('resize', scalePreview);
+    scalePreview();
+
+    update(true);
+    initHistory();
+  }
+
+  function flashLink(){
+    var inp = document.getElementById('linkOut');
+    inp.style.borderColor = 'var(--error)';
+    inp.style.color = '#f3b0b0';
+    setTimeout(function(){ inp.style.borderColor = ''; inp.style.color = ''; }, 1200);
+  }
+
+  /* ---------- обновление ссылки и превью ---------- */
+  var pvTimer = null;
+  function update(immediate){
+    var url = buildUrl();
+    var linkOut = document.getElementById('linkOut');
+    document.getElementById('certNoOut').textContent = state.certNo;
+    linkOut.value = url || 'Заполните имя и сумму…';
+
+    var name = state.name.trim() || 'вас';
+    var shareText = '🎁 Подарочный сертификат от психолога Анны Маловичко для ' + name + '. Откройте по ссылке:';
+    if(url){
+      document.getElementById('waShare').href = 'https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + url);
+      document.getElementById('tgShare').href = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(shareText);
+      document.getElementById('openFull').href = url;
+    }
+
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(refreshPreview, immediate ? 60 : 600);
+  }
+
+  var pvSeq = 0;
+  /* метка запуска страницы: делает адрес предпросмотра уникальным между
+     сессиями, иначе браузер отдаёт iframe из кэша со старой версией */
+  var PV_BOOT = Date.now().toString(36);
+  function previewUrl(){
+    var payload = {
+      n: state.name.trim() || 'Мария Иванова',
+      a: Number(state.amount) || 5000,
+      t: state.type,
+      k: state.certNo
+    };
+    if(state.expiry) payload.e = state.expiry;
+    if(state.message.trim()) payload.m = state.message.trim();
+    /* r меняется не только в hash (иначе iframe не перезагружается) и не
+       повторяется между сессиями (иначе предпросмотр придёт из кэша) */
+    return viewerBase() + '?pv=1&r=' + PV_BOOT + '-' + (++pvSeq) + '#' + encodeData(payload);
+  }
+  function refreshPreview(){
+    document.getElementById('pv').src = previewUrl();
+  }
+
+  /* ---------- история ----------
+     Источник правды — хостинг (gift-api.php → gift-data/history.json):
+     история общая для всех устройств Анны. localStorage — кэш и
+     запасной вариант, если сервер недоступен (например, локальный запуск
+     или хостинг без PHP). */
+  var API_URL = 'gift-api.php';
+  var serverOk = null; /* null — ещё не знаем, true/false — результат */
+
+  function apiCall(payload){
+    payload.pin = sessionStorage.getItem('am_gift_auth') || '';
+    return fetch(API_URL, { method:'POST', body: JSON.stringify(payload) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d || !d.ok) throw new Error(d && d.error || 'api');
+        return d.list || [];
+      });
+  }
+  function histNote(){
+    var el = document.getElementById('histNote');
+    if(serverOk) el.textContent = 'История сохраняется на сайте и видна с любого устройства. Ссылку можно скопировать повторно в любой момент.';
+    else el.textContent = 'Сервер истории недоступен — записи хранятся только в этом браузере.';
+  }
+
+  function loadHistory(){
+    try{ return JSON.parse(localStorage.getItem('am_gift_history') || '[]'); }
+    catch(e){ return []; }
+  }
+  function cacheHistory(list){
+    try{ localStorage.setItem('am_gift_history', JSON.stringify(list.slice(0, 40))); }catch(e){}
+  }
+
+  /* первая загрузка: тянем с сервера; локальные записи, которых там нет
+     (созданные до синхронизации), досылаем на сервер */
+  function initHistory(){
+    apiCall({ action:'list' }).then(function(serverList){
+      serverOk = true;
+      var known = {};
+      serverList.forEach(function(x){ known[x.k] = 1; });
+      var missing = loadHistory().filter(function(x){ return x.k && !known[x.k]; });
+      if(!missing.length){
+        cacheHistory(serverList); histNote(); renderHistory(serverList); return;
+      }
+      var chain = Promise.resolve(serverList);
+      missing.reverse().forEach(function(item){
+        chain = chain.then(function(){ return apiCall({ action:'save', item:item }); });
+      });
+      chain.then(function(finalList){
+        cacheHistory(finalList); histNote(); renderHistory(finalList);
+      });
+    }).catch(function(){
+      serverOk = false; histNote(); renderHistory(loadHistory());
+    });
+  }
+
+  function saveToHistory(url){
+    if(!url) return;
+    var item = {
+      k: state.certNo, n: state.name.trim(), a: Number(state.amount),
+      t: state.type, e: state.expiry, url: url, ts: Date.now()
+    };
+    savedCurrent = true;
+    /* локальный кэш обновляем сразу, сервер — следом */
+    var list = loadHistory().filter(function(x){ return x.k !== item.k; });
+    list.unshift(item);
+    cacheHistory(list);
+    renderHistory(list);
+    apiCall({ action:'save', item:item }).then(function(serverList){
+      serverOk = true; cacheHistory(serverList); histNote(); renderHistory(serverList);
+    }).catch(function(){ serverOk = false; histNote(); });
+  }
+
+  function deleteFromHistory(k){
+    var list = loadHistory().filter(function(x){ return x.k !== k; });
+    cacheHistory(list);
+    renderHistory(list);
+    apiCall({ action:'delete', k:k }).then(function(serverList){
+      serverOk = true; cacheHistory(serverList); histNote(); renderHistory(serverList);
+    }).catch(function(){ serverOk = false; histNote(); });
+  }
+
+  function renderHistory(list){
+    var listEl = document.getElementById('historyList');
+    if(!list) list = loadHistory();
+    if(!list.length){
+      listEl.innerHTML = '<div class="history__empty">Пока пусто. Создайте первый сертификат и нажмите «Копировать» — он появится здесь.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    list.forEach(function(item){
+      var t = TYPES.find(function(x){ return x.id === item.t; }) || TYPES[0];
+      var d = new Date(item.ts);
+      var row = document.createElement('div');
+      row.className = 'hitem';
+      row.innerHTML =
+        '<div class="hitem__emoji">' + t.emoji + '</div>' +
+        '<div class="hitem__info">' +
+          '<div class="hitem__name"></div>' +
+          '<div class="hitem__sub">' + Number(item.a).toLocaleString('ru-RU') + ' ₽ · ' + t.name +
+            ' · ' + item.k + ' · ' + ('0'+d.getDate()).slice(-2) + '.' + ('0'+(d.getMonth()+1)).slice(-2) + '.' + d.getFullYear() + '</div>' +
+        '</div>' +
+        '<button class="hitem__btn" data-act="copy">Копировать ссылку</button>' +
+        '<a class="hitem__btn" target="_blank" rel="noopener" data-act="open">Открыть</a>' +
+        '<button class="hitem__btn hitem__btn--del" data-act="del" aria-label="Удалить">✕</button>';
+      row.querySelector('.hitem__name').textContent = item.n || '—';
+      row.querySelector('[data-act="open"]').href = item.url;
+      row.querySelector('[data-act="copy"]').addEventListener('click', function(){
+        var b = this;
+        (navigator.clipboard ? navigator.clipboard.writeText(item.url) : Promise.reject()).then(function(){
+          b.textContent = '✓ Скопировано';
+          setTimeout(function(){ b.textContent = 'Копировать ссылку'; }, 1600);
+        }).catch(function(){ prompt('Скопируйте ссылку:', item.url); });
+      });
+      row.querySelector('[data-act="del"]').addEventListener('click', function(){
+        deleteFromHistory(item.k);
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  /* ---------- автологин в рамках сессии ---------- */
+  if(sessionStorage.getItem('am_gift_auth') === PIN_OK){
+    pin = PIN_OK;
+    lock.classList.add('open');
+    app.removeAttribute('data-locked');
+    initApp();
+  }
+  </script>
+</body>
+</html>

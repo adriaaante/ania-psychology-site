@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 940" role="img" aria-label="Фотография Анны — появится здесь">
+  <!-- Плейсхолдер: страницы ссылаются на about.jpg, этот файл — запасной
+       вариант (onerror). Положите реальное фото как assets/img/anna/about.jpg. -->
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F1EDE4"/>
+      <stop offset=".6" stop-color="#E8E3D4"/>
+      <stop offset="1" stop-color="#DBD3BF"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="940" fill="url(#bg2)"/>
+  <circle cx="180" cy="180" r="130" fill="#D9A87F" opacity=".35"/>
+  <circle cx="660" cy="800" r="200" fill="#BFCBB2" opacity=".5"/>
+  <path d="M-40 700 C180 600 380 760 580 670 C700 618 780 660 840 630 L840 940 L-40 940 Z" fill="#AEBDA0" opacity=".45"/>
+  <g transform="translate(400 430)">
+    <circle r="132" fill="none" stroke="#4A6151" stroke-width="4" opacity=".8"/>
+    <path d="M-58 66 L0 -68 L58 66" fill="none" stroke="#4A6151" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M-33 27 Q0 48 33 27" fill="none" stroke="#C08A62" stroke-width="10" stroke-linecap="round"/>
+    <path d="M3 -72 C6 -97 25 -111 47 -114 C45 -90 28 -75 3 -72 Z" fill="#C08A62"/>
+  </g>
+</svg>

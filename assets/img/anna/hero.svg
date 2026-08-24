@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1040" role="img" aria-label="Портрет Анны — фотография появится здесь">
+  <!-- Плейсхолдер портрета: страницы ссылаются на hero.jpg, а этот файл —
+       запасной вариант (onerror). Положите реальное фото как
+       assets/img/anna/hero.jpg — и оно подхватится автоматически. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EDEFE6"/>
+      <stop offset=".55" stop-color="#E2E8DC"/>
+      <stop offset="1" stop-color="#D5DECC"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E9C9A8"/>
+      <stop offset="1" stop-color="#D9A87F"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1040" fill="url(#bg)"/>
+  <circle cx="620" cy="200" r="150" fill="url(#sun)" opacity=".5"/>
+  <circle cx="140" cy="880" r="220" fill="#C9D4BF" opacity=".55"/>
+  <path d="M-40 760 C160 640 340 820 520 720 C660 645 760 700 840 660 L840 1040 L-40 1040 Z" fill="#BFCBB2" opacity=".5"/>
+  <path d="M-40 840 C180 740 360 900 560 810 C690 752 780 800 840 770 L840 1040 L-40 1040 Z" fill="#A9B89B" opacity=".45"/>
+  <g transform="translate(400 470)">
+    <circle r="150" fill="none" stroke="#4A6151" stroke-width="4" opacity=".8"/>
+    <path d="M-66 74 L0 -76 L66 74" fill="none" stroke="#4A6151" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M-38 30 Q0 54 38 30" fill="none" stroke="#C08A62" stroke-width="11" stroke-linecap="round"/>
+    <path d="M3 -80 C7 -108 28 -124 52 -127 C50 -101 31 -84 3 -80 Z" fill="#C08A62"/>
+  </g>
+</svg>

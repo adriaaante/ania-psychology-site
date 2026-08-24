@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Логотип — буква А">
+  <!-- Монограмма «А»: тонкое кольцо, буква с мягкой дугой-перекладиной
+       и листок у вершины — рост, спокойствие, забота. -->
+  <circle cx="32" cy="33" r="28.4" fill="none" stroke="#4A6151" stroke-width="1.5" opacity=".85"/>
+  <path d="M19 46.5 L32 17 L45 46.5" fill="none" stroke="#4A6151" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24.4 37.6 Q32 42.4 39.6 37.6" fill="none" stroke="#C08A62" stroke-width="2.7" stroke-linecap="round"/>
+  <path d="M32.6 16.2 C33.4 10.6 37.6 7.4 42.4 6.8 C41.9 11.9 38.2 15.4 32.6 16.2 Z" fill="#C08A62"/>
+</svg>

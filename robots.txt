@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /gift.html
+Disallow: /gift-studio.html
+Disallow: /gift-api.php
+
+# Домен-плейсхолдер: замените на реальный при подключении домена
+Sitemap: https://annamalovichko.ru/sitemap.xml
