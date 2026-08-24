@@ -76,10 +76,9 @@ gift-studio.html + перегенерировать og-обложку.
   грузятся на проде, локально в песочнице могут не резолвиться — это норм.
 - Категории/секции не генерятся из JS (кроме типов в студии) — правки контента
   прямо в HTML.
-- **Деплой: GitHub Pages** — Deploy from a branch,
-  ветка `claude/anna-psychologist-website-uivhzp`, папка `/` (root).
+- **Деплой: GitHub Pages** — Deploy from a branch, ветка `main`, папка `/` (root).
   Прод: https://adriaaante.github.io/ania-psychology-site/ — выкатка
-  автоматически после push в ЭТУ ветку (не main!). Проверка: открыть URL.
+  автоматически после push в `main`. Проверка: открыть URL.
   PHP на Pages не работает → gift-api.php мёртв, история сертификатов
   только в localStorage браузера (сами сертификаты работают — всё в ссылке).
   Для общей истории нужен PHP-хостинг. Custom domain не настроен.
