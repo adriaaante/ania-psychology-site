@@ -195,12 +195,15 @@
     $$('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
   }
 
-  /* -------- Активный пункт меню -------- */
+  /* -------- Активный пункт меню --------
+     Якорные пункты (index.html#faq) не подсвечиваем: иначе на главной
+     активными выглядят сразу «Главная» и «Вопросы». */
   function setupActiveNav() {
     const path = location.pathname.split('/').pop() || 'index.html';
     $$('.nav__link, .mobile-menu__link').forEach(a => {
-      const href = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
-      if (href === path) a.classList.add('is-active');
+      const href = a.getAttribute('href') || '';
+      if (href.includes('#')) return;
+      if (href.split('/').pop() === path) a.classList.add('is-active');
     });
   }
 
