@@ -40,10 +40,14 @@ gift-studio.html + перегенерировать og-обложку.
   скриншот-тестов.
 - `assets/img/logo-mark.svg` — лого-монограмма «А» (кольцо + буква с
   дугой-перекладиной + листок). Он же favicon.
-- `assets/img/anna/hero.svg|about.svg` — плейсхолдеры фото. Страницы ссылаются
-  на `hero.jpg`/`about.jpg` с `onerror`-fallback на svg: реальные фото Анны
-  просто положить рядом как .jpg — подхватятся сами. Фото есть у заказчика
-  (присылались в чат), в репо их пока НЕТ.
+- `assets/img/anna/hero.jpg|about.jpg` — реальные фото Анны (в репо).
+  Источник — Drive-папка заказчика `1LSftAizFCcdcjQUImD61tV4LcTmJmraf`:
+  hero ← Анна1.jpg `1LxHB0ydj-5-3rlvggQDxXC9zLXF9hcfy` (кроп 4:5.05, центр x=370),
+  about ← Анна3.jpg `1bNmLVYAb_4w9HVtF19Vh1XrtHnTiuqve` (кроп 4:4.7, центр x=330).
+  Анна2.jpg `1YjLTJggDadb_Gs3mO9xnLDEHjWI_z0v3` (селфи в машине) НЕ использована —
+  выбивается из премиум-стиля. Оригиналы всего 640×640 — если появятся
+  версии больше, заменить (кроп через PIL, quality=92).
+  `hero.svg|about.svg` — fallback-плейсхолдеры (`onerror` в img), не удалять.
 - `scripts/generate-og.py` — генерит `assets/img/og-cover.png` (Pillow,
   системные DejaVu-шрифты).
 
