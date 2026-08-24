@@ -136,14 +136,35 @@
     }
     .finput:focus{border-color:var(--caramel);box-shadow:0 0 0 4px rgba(192,138,98,.14);}
     textarea.finput{resize:vertical;min-height:76px;line-height:1.5;}
-    /* iOS Safari: у date-инпута своя intrinsic-ширина и центровка —
-       без appearance:none он вылезает за рамки формы на телефоне */
-    input[type="date"].finput{
-      -webkit-appearance:none;appearance:none;
-      display:block;width:100%;max-width:100%;min-width:0;
-      min-height:49px;text-align:left;
+
+    /* ---------- свой календарь (русский, дд.мм.гггг) ----------
+       Нативный input[type=date] показывает формат и язык ОС —
+       поэтому поле readonly + собственный календарь. */
+    .datewrap{position:relative;}
+    .datewrap .finput{cursor:pointer;padding-right:46px;}
+    .datewrap__icon{
+      position:absolute;right:16px;top:50%;transform:translateY(-50%);
+      width:18px;height:18px;color:var(--muted);pointer-events:none;
     }
-    input[type="date"].finput::-webkit-date-and-time-value{text-align:left;}
+    .cal{
+      position:absolute;z-index:40;top:calc(100% + 8px);left:0;
+      width:min(300px, 100%);background:#fff;border:1px solid var(--border);
+      border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:14px;
+    }
+    .cal__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .cal__title{font:700 14px/1 var(--body);color:var(--sage);}
+    .cal__nav{
+      width:32px;height:32px;border-radius:50%;font-size:17px;line-height:1;color:var(--sage);
+      border:1px solid var(--border);transition:border-color .15s, color .15s;
+    }
+    .cal__nav:hover{border-color:var(--caramel);color:var(--caramel-dark);}
+    .cal__grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
+    .cal__dow{font:700 10.5px/2.2 var(--body);color:var(--muted);text-transform:uppercase;}
+    .cal__dow--we{color:var(--caramel-dark);}
+    .cal__day{height:34px;border-radius:10px;font:600 13px/1 var(--body);color:var(--ink);transition:background .12s;}
+    .cal__day:hover{background:var(--caramel-pale);}
+    .cal__day.today{box-shadow:inset 0 0 0 1.4px var(--caramel);}
+    .cal__day.on{background:var(--sage);color:#fff;}
 
     .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
     .chip{
@@ -319,7 +340,11 @@
 
           <div class="fgroup">
             <label class="flabel" for="fExpiry">Действителен до</label>
-            <input class="finput" id="fExpiry" type="date">
+            <div class="datewrap">
+              <input class="finput" id="fExpiry" type="text" readonly placeholder="дд.мм.гггг" aria-label="Действителен до, формат дд.мм.гггг">
+              <svg class="datewrap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <div class="cal" id="cal" hidden></div>
+            </div>
             <div class="chips" id="expiryChips">
               <button class="chip" data-m="3">3 месяца</button>
               <button class="chip on" data-m="6">6 месяцев</button>
@@ -487,6 +512,16 @@
     return d.toISOString().slice(0, 10);
   }
 
+  /* даты храним в ISO (для ссылки), показываем всегда как дд.мм.гггг */
+  function fmtRu(iso){
+    if(!iso) return '';
+    var p = iso.split('-');
+    return p[2] + '.' + p[1] + '.' + p[0];
+  }
+  function isoOf(y, m, d){
+    return y + '-' + ('0' + (m + 1)).slice(-2) + '-' + ('0' + d).slice(-2);
+  }
+
   /* ---------- кодирование ссылки ---------- */
   function encodeData(obj){
     var bytes = new TextEncoder().encode(JSON.stringify(obj));
@@ -540,7 +575,7 @@
     var fAmount = document.getElementById('fAmount');
     var fExpiry = document.getElementById('fExpiry');
     var fMessage = document.getElementById('fMessage');
-    fExpiry.value = state.expiry;
+    fExpiry.value = fmtRu(state.expiry);
 
     fName.addEventListener('input', function(){ touchForm(); state.name = fName.value; update(); });
     fAmount.addEventListener('input', function(){
@@ -548,12 +583,66 @@
       document.querySelectorAll('#amountChips .chip').forEach(function(c){ c.classList.toggle('on', c.dataset.v === fAmount.value); });
       update();
     });
-    fExpiry.addEventListener('input', function(){
-      touchForm(); state.expiry = fExpiry.value;
-      document.querySelectorAll('#expiryChips .chip').forEach(function(c){ c.classList.remove('on'); });
-      update();
-    });
     fMessage.addEventListener('input', function(){ touchForm(); state.message = fMessage.value; update(); });
+
+    /* ---------- русский календарь для «Действителен до» ---------- */
+    var MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                  'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    var DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+    var calEl = document.getElementById('cal');
+    var calView = new Date();
+
+    function renderCal(){
+      var y = calView.getFullYear(), m = calView.getMonth();
+      var shift = (new Date(y, m, 1).getDay() + 6) % 7; /* неделя с понедельника */
+      var dim = new Date(y, m + 1, 0).getDate();
+      var t = new Date();
+      var todayIso = isoOf(t.getFullYear(), t.getMonth(), t.getDate());
+      var html = '<div class="cal__head">' +
+        '<button type="button" class="cal__nav" data-nav="-1" aria-label="Предыдущий месяц">‹</button>' +
+        '<div class="cal__title">' + MONTHS[m] + ' ' + y + '</div>' +
+        '<button type="button" class="cal__nav" data-nav="1" aria-label="Следующий месяц">›</button>' +
+        '</div><div class="cal__grid">';
+      DOW.forEach(function(d, i){
+        html += '<span class="cal__dow' + (i >= 5 ? ' cal__dow--we' : '') + '">' + d + '</span>';
+      });
+      for(var i = 0; i < shift; i++) html += '<span></span>';
+      for(var d = 1; d <= dim; d++){
+        var iso = isoOf(y, m, d);
+        html += '<button type="button" class="cal__day' +
+          (iso === state.expiry ? ' on' : '') + (iso === todayIso ? ' today' : '') +
+          '" data-iso="' + iso + '">' + d + '</button>';
+      }
+      calEl.innerHTML = html + '</div>';
+    }
+    function openCal(){
+      calView = state.expiry ? new Date(state.expiry + 'T00:00:00') : new Date();
+      renderCal();
+      calEl.hidden = false;
+    }
+    fExpiry.addEventListener('click', function(){
+      if(calEl.hidden) openCal(); else calEl.hidden = true;
+    });
+    calEl.addEventListener('click', function(e){
+      var nav = e.target.closest('[data-nav]');
+      if(nav){
+        calView.setMonth(calView.getMonth() + Number(nav.dataset.nav));
+        renderCal();
+        return;
+      }
+      var day = e.target.closest('[data-iso]');
+      if(day){
+        touchForm();
+        state.expiry = day.dataset.iso;
+        fExpiry.value = fmtRu(state.expiry);
+        document.querySelectorAll('#expiryChips .chip').forEach(function(c){ c.classList.remove('on'); });
+        calEl.hidden = true;
+        update();
+      }
+    });
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.datewrap')) calEl.hidden = true;
+    });
 
     document.getElementById('amountChips').addEventListener('click', function(e){
       var c = e.target.closest('.chip'); if(!c) return;
@@ -565,7 +654,8 @@
     document.getElementById('expiryChips').addEventListener('click', function(e){
       var c = e.target.closest('.chip'); if(!c) return;
       touchForm();
-      fExpiry.value = plusMonths(Number(c.dataset.m)); state.expiry = fExpiry.value;
+      state.expiry = plusMonths(Number(c.dataset.m));
+      fExpiry.value = fmtRu(state.expiry);
       this.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('on', x === c); });
       update();
     });
@@ -582,7 +672,7 @@
       state.expiry = plusMonths(6);
       state.certNo = newCertNo(); savedCurrent = false;
       fName.value = ''; fAmount.value = ''; fMessage.value = '';
-      fExpiry.value = state.expiry;
+      fExpiry.value = fmtRu(state.expiry);
       document.querySelectorAll('#amountChips .chip').forEach(function(c){ c.classList.remove('on'); });
       document.querySelectorAll('#expiryChips .chip').forEach(function(c){ c.classList.toggle('on', c.dataset.m === '6'); });
       update(true);

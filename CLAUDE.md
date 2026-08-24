@@ -62,6 +62,8 @@ gift-studio.html + перегенерировать og-обложку.
 `gift.html#1.<base64url(JSON)>`, JSON `{n,a,t,e,m,k}`, номер `AM-ГГММ-XXXX`.
 - Пин студии: **1234** (4 цифры; `atob('MTIzNA==')` в gift-studio.html,
   `PIN_HASH`=sha256 в gift-api.php — менять синхронно).
+- Дата «Действителен до» — СВОЙ календарь (русский, дд.мм.гггг), не
+  input[type=date]: нативный показывает локаль ОС. В ссылке дата остаётся ISO.
 - Поводы (`THEMES` в gift.html == `TYPES` в студии, менять синхронно):
   universal («Забота о себе»), birthday, support («Поддержка», листья),
   newyear (тёмная тема, глубокая зелень), march8, love.
