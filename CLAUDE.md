@@ -71,6 +71,20 @@ gift-studio.html + перегенерировать og-обложку.
 - Обе страницы `noindex`, в sitemap их НЕ добавлять, ссылок с сайта на студию
   нет — Анна открывает `/gift-studio.html` напрямую.
 
+## Брендинг отчётности (FutureFlow) — правило заказчика
+Любой документ-деливерабл для заказчика (PDF-отчёты, инструкции, презентации
+и т.п.) оформлять с лого его компании **FutureFlow** и пометкой
+«Подготовлено FutureFlow · futureflow.ru». Лого в Drive, папка
+`1H7vwU5hzOHmrxfwqz1PqRIE1HODliVMG` → актуальные в подпапке «Новое лого»
+`1bzhwMnt0NT7E7UAYU2cGp_dZ49XgBzUf` (белый чип+надпись на синем #3B82C4~):
+- с URL: png `1BoCeOv3OxMuTbMyNYivXnmxbFE45A34H` (2400×1043), svg
+  `1GZappwZVwVbh-xkHhzlpnEsHtyTT_q5m`, pdf `1GE21i3m-xv6OoG_XwRpSL9cs6lcZCHfy`
+- без URL: png `15OSPpPY2ly_E-7WAZEe69Nzhxwl4vqHa`, svg
+  `17GmEhL_lf6ZMMaZN1j8-2V61r9MNxl4x`, pdf `1xwB3fGLwmUA9V_Lx8uQjolFI0wLzJay7`
+- белый (для тёмного фона): png `1hYMX0iJHA-Fybi3bi1M_TVmHx0Jh3tGQ`
+Качать через Google Drive MCP (download_file_content → base64 → decode).
+Это про документы ОТ FutureFlow заказчику — не про сайт Анны.
+
 ## Грабли / неочевидное
 - Песочница без внешнего интернета к произвольным хостам; Google Fonts
   грузятся на проде, локально в песочнице могут не резолвиться — это норм.
